@@ -17,17 +17,22 @@ type Stats struct {
 
 type Articles []Stats
 
-type Data struct {
-	Country string `json:"country"`
-	IsoCode string `json:"iso_code"`
-	Data    []struct {
-		Date                        string
-		TotalVaccinations           int     `json:"total_vaccinations"`
-		PeopleVaccinated            int     `json:"people_vaccinated"`
-		TotalVaccinationsPerHundred float32 `json:"total_vaccinations_per_hundred"`
-		PeopleVaccinatedPerHundred  float32 `json:"people_vaccinated_per_hundred"`
-		DailyVaccinationsperMillion int     `json:"daily_vaccinations_per_million"`
-	}
+type DataFirst struct {
+	Country string     `json:"country"`
+	IsoCode string     `json:"iso_code"`
+	Data    DataSecond `json:"data"`
+}
+
+//Data from DataFirst incorrect - troubleshoot
+type DataSecond struct {
+	Date              string `json:"date"`
+	TotalVaccinations int    `json:"total_vaccinations"`
+	PeopleVaccinated  int    `json:"people_vaccinated"`
+	//DailyVaccinationsRaw		int 	`json:"daily_vaccinations_raw"`
+	//DailyVaccinations			int		`json:"daily_vaccinations"`
+	TotalVaccinationsPerHundred float32 `json:"total_vaccinations_per_hundred"`
+	PeopleVaccinatedPerHundred  float32 `json:"people_vaccinated_per_hundred"`
+	//DailyVaccinationPerMillion  int     `json:"daily_vaccinations_per_million"`
 }
 
 func reqData() {
@@ -44,11 +49,9 @@ func reqData() {
 		log.Fatalln(err)
 	}
 
-	fmt.Println(string(body))
-
-	/*var datas []Data
+	var datas []DataFirst
 	json.Unmarshal([]byte(body), &datas)
-	fmt.Printf("Datas : %+v", datas)*/
+	fmt.Printf("Datas : %+v", datas)
 
 }
 
