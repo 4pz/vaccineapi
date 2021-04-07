@@ -18,21 +18,9 @@ type Stats struct {
 type Articles []Stats
 
 type DataFirst struct {
-	Country string     `json:"country"`
-	IsoCode string     `json:"iso_code"`
-	Data    DataSecond `json:"data"`
-}
-
-//Data from DataFirst incorrect - troubleshoot
-type DataSecond struct {
-	Date              string `json:"date"`
-	TotalVaccinations int    `json:"total_vaccinations"`
-	PeopleVaccinated  int    `json:"people_vaccinated"`
-	//DailyVaccinationsRaw		int 	`json:"daily_vaccinations_raw"`
-	//DailyVaccinations			int		`json:"daily_vaccinations"`
-	TotalVaccinationsPerHundred float32 `json:"total_vaccinations_per_hundred"`
-	PeopleVaccinatedPerHundred  float32 `json:"people_vaccinated_per_hundred"`
-	//DailyVaccinationPerMillion  int     `json:"daily_vaccinations_per_million"`
+	Country string      `json:"country"`
+	IsoCode string      `json:"iso_code"`
+	Data    interface{} `json:"data"`
 }
 
 func reqData() {
@@ -51,8 +39,13 @@ func reqData() {
 
 	var datas []DataFirst
 	json.Unmarshal([]byte(body), &datas)
-	fmt.Printf("Datas : %+v", datas)
 
+	for i := 0; i < len(datas); i++ {
+		if datas[i].Country == "World" {
+			fmt.Println(datas[i].Data)
+			//convert datas[i].Data to struct and parse for needed data
+		}
+	}
 }
 
 func returnStats(w http.ResponseWriter, r *http.Request) {
