@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -120,8 +121,10 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/", indexHandler)
-	http.HandleFunc("/stats", returnStats)
+	myRouter := mux.NewRouter().StrictSlash(true)
+
+	myRouter.HandleFunc("/", indexHandler).Methods("GET", "OPTIONS")
+	myRouter.HandleFunc("/stats", returnStats).Methods("GET", "OPTIONS")
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -130,7 +133,7 @@ func main() {
 	}
 
 	log.Printf("Listening on port %s", port)
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
+	if err := http.ListenAndServe(":"+port, myRouter); err != nil {
 		log.Fatal(err)
 	}
 }
