@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 )
 
 type GeoData struct {
@@ -46,6 +47,11 @@ var totalVaccinations, peopleVaccinated, peopleFullyVaccinated, dailyVaccination
 var totalVaccinationsPerHundred, peopleVaccinatedPerHundred, peopleFullyVaccinatedPerHundred float64
 
 func returnStats(w http.ResponseWriter, r *http.Request) {
+
+	if r.URL.Path != "/stats" {
+		http.NotFound(w, r)
+		return
+	}
 
 	resp, err := http.Get("https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/vaccinations.json")
 	if err != nil {
@@ -100,23 +106,31 @@ func returnStats(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	fmt.Println("Endpoint Hit: All Stats Endpoint")
 	json.NewEncoder(w).Encode(stats)
+	fmt.Fprint(w)
 }
 
-func homePage(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome to the HomePage!")
-	fmt.Println("Endpoint Hit: homePage")
-}
-
-func handleRequests() {
-	http.HandleFunc("/", homePage)
-	http.HandleFunc("/stats", returnStats)
-	log.Fatal(http.ListenAndServe(":10000", nil))
+// indexHandler responds to requests with our greeting.
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
+	}
+	fmt.Fprint(w, "Hello, World!")
 }
 
 func main() {
-	handleRequests()
-}
+	http.HandleFunc("/", indexHandler)
+	http.HandleFunc("/stats", returnStats)
 
-//add per 5 min reload
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+		log.Printf("Defaulting to port %s", port)
+	}
+
+	log.Printf("Listening on port %s", port)
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
+		log.Fatal(err)
+	}
+}
