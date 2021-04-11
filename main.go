@@ -49,6 +49,8 @@ var totalVaccinationsPerHundred, peopleVaccinatedPerHundred, peopleFullyVaccinat
 
 func returnStats(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	if r.URL.Path != "/stats" {
 		http.NotFound(w, r)
 		return
