@@ -2,5 +2,6 @@ runtime: go115 # or go112 or go113 for the Go 1.12 or Go 1.13 runtime
 
 handlers:
   - url: /stats
+    static_dir: static/stats
     http_headers:
-      Access-Control-Allow-Origin: *
+      Access-Control-Allow-Origin: https://www.simple2006.github.io/covidtracker
